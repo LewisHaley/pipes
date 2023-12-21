@@ -124,7 +124,7 @@ def get_color_map_for_labels(labels: Set[str]) -> Mapping[str, str]:
     num_labels = len(labels)
     hues = iter(range(0, 101, 100 // num_labels))
     color_map = {}
-    for label in labels:
+    for label in sorted(labels):
         hue = next(hues)
         color = tuple(map(lambda x: x * 255, colorsys.hsv_to_rgb(hue / 100, 1, 1)))
         color_map[label] = color
