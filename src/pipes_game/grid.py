@@ -28,6 +28,22 @@ class Point:
         adjacent_y_and_same_x = abs(self.y - other.y) == 1 and self.x == other.x
         return adjacent_x_and_same_y or adjacent_y_and_same_x
 
+    def get_neighbors(self) -> Tuple["Point", "Point", "Point", "Point"]:
+        """Get the 4 cardinal neighbor points for this point.
+
+        :returns: a tuple of the north, east, south and west neighbors of this point
+        """
+        neighbors = [
+            Point(self.x + dx, self.y + dy)
+            for dx, dy in [
+                (0, -1),
+                (1, 0),
+                (0, 1),
+                (-1, 0),
+            ]
+        ]
+        return neighbors
+
 
 class PipesGrid:
     """Container class for the pipe grid array data."""

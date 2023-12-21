@@ -3,8 +3,7 @@
 import argparse
 import pathlib
 
-from . import display, drawer, parser
-from .grid import Point
+from . import display, drawer, parser, solver
 from .gobject import GLib
 
 
@@ -45,10 +44,18 @@ def main() -> None:
     frame = drawer.grid_to_frame(game_grid, args.width, args.height)
     display_.update(frame)
 
-    def update():
-        game_grid.set_cell(Point(1, 1), "B")
+    def update() -> bool:
+        """Update the game grid and display.
+
+        :returns: True while the game grid is unsolved, thus meaning that the callback
+            is called against to iterate the solve
+        """
+        solver.iter_solve(game_grid)
         frame = drawer.grid_to_frame(game_grid, args.width, args.height)
         display_.update(frame)
+        if complete := game_grid.is_complete():
+            print("Game is fully solved!")
+        return not complete
 
     GLib.timeout_add_seconds(2, update)
 
