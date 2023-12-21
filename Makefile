@@ -27,10 +27,10 @@ tests: venv
 	;
 .PHONY: tests
 
-venv: requirements.txt
+venv: venv/pyvenv.cfg
 venv/pyvenv.cfg: bootstrap
-	bootstrap/bin/python -m venv --upgrade-deps $@
-	$@/bin/python -m pip install \
+	bootstrap/bin/python -m venv --upgrade-deps venv
+	venv/bin/python -m pip install \
 		--prefer-binary \
 		--require-virtualenv \
 		--progress-bar=off \
@@ -48,8 +48,8 @@ requirements.txt: bootstrap
 
 bootstrap: bootstrap/pyvenv.cfg
 bootstrap/pyvenv.cfg:
-	/usr/bin/$(PYTHON_VER) -m venv --upgrade-deps $@
-	$@/bin/python -m pip install \
+	/usr/bin/$(PYTHON_VER) -m venv --upgrade-deps bootstrap
+	bootstrap/bin/python -m pip install \
 		--prefer-binary \
 		--require-virtualenv \
 		--progress-bar=off \
