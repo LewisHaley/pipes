@@ -42,12 +42,12 @@ def grid_to_frame(grid: PipesGrid, width: int, height: int) -> numpy.array:
             thickness=3,
         )
 
-    font_scale = min(width, height) / 100
+    font_scale = min(cell_width, cell_height) / 40
 
     font_options = {
         "fontFace": cv2.FONT_HERSHEY_SIMPLEX,
         "fontScale": font_scale,
-        "thickness": int(font_scale),
+        "thickness": int(font_scale + 1),
     }
     color_map_for_labels = get_color_map_for_labels(grid.pipe_labels)
     _paint_cells(
