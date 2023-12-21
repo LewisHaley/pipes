@@ -71,7 +71,7 @@ class PipesGrid:
         if value not in self.pipe_labels:
             raise ValueError(f"{value!r} is not a known pipe label")
 
-        if existing := self.array[position.y][position.x] != UNSET:
+        if (existing := self.array[position.y][position.x]) != UNSET:
             raise RuntimeError(f"Position {position} already has a value {existing}")
 
         self.array[position.y][position.x] = value
