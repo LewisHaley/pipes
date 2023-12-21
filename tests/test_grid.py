@@ -57,3 +57,28 @@ class TestGetCell:
             match=r"Position is out-of-bounds of the grid",
         ):
             test_grid.get_cell(position)
+
+
+def test_iterate_yields_each_point_and_value():
+    array = [
+        ["A", UNSET, UNSET, "A"],
+        ["B", UNSET, UNSET, "B"],
+    ]
+    test_grid = grid.PipesGrid(
+        num_cols=4,
+        num_rows=2,
+        array=array,
+        pipe_labels={"A", "B"},
+    )
+    elems = list(test_grid)
+    expected_elems = [
+        (grid.Point(0, 0), "A"),
+        (grid.Point(1, 0), UNSET),
+        (grid.Point(2, 0), UNSET),
+        (grid.Point(3, 0), "A"),
+        (grid.Point(0, 1), "B"),
+        (grid.Point(1, 1), UNSET),
+        (grid.Point(2, 1), UNSET),
+        (grid.Point(3, 1), "B"),
+    ]
+    assert elems == expected_elems

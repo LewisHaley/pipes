@@ -88,6 +88,6 @@ class PipesGrid:
 
         :returns: a generator for each cell
         """
-        for y in range(self.num_cols):
-            for x in range(self.num_rows):
+        for y in range(self.num_rows):
+            for x in range(self.num_cols):
                 yield Point(x, y), self.array[y][x]
