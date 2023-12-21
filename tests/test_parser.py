@@ -8,9 +8,9 @@ from pipes_game.grid import UNSET
 
 def test_parse_from_lines__parses_lines_of_text_into_a_grid():
     lines = [
-        "A A",
-        "B B",
-        "C C",
+        "A#A",
+        "B#B",
+        "C#C",
     ]
     grid = parser.parse_from_lines(lines)
 
@@ -29,9 +29,9 @@ def test_parse_from_file__parses_a_text_file_into_a_grid(tmp_path):
     the_file.write_text(
         "\n".join(
             [
-                "A A",
-                "B B",
-                "C C",
+                "A#A",
+                "B#B",
+                "C#C",
             ]
         )
     )

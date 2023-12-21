@@ -5,6 +5,8 @@ from typing import List
 
 from .grid import PipesGrid, UNSET
 
+UNSET_SYMBOL = "#"
+
 
 def parse_from_file(filepath: Path) -> PipesGrid:
     """Parse a pipes grid from the contents of a file.
@@ -32,7 +34,7 @@ def parse_from_lines(lines: List[str]) -> PipesGrid:
 
     :raises ValueError: if the input lines do not define a valid grid
     """
-    array = [[UNSET if val == " " else val for val in line] for line in lines]
+    array = [[UNSET if val == UNSET_SYMBOL else val for val in line] for line in lines]
     if len(set(len(row) for row in array)) != 1:
         raise ValueError("Not all rows in grid are of equal length")
 
