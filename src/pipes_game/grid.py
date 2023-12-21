@@ -81,7 +81,7 @@ class PipesGrid:
 
         :returns: True if in-bounds, else False
         """
-        return 0 <= position.x < self.num_rows and 0 <= position.y < self.num_cols
+        return 0 <= position.x < self.num_cols and 0 <= position.y < self.num_rows
 
     def __iter__(self) -> Generator[Tuple[Point, Optional[str]], None, None]:
         """Iterate through each element in the grid, yielding is position and value.
