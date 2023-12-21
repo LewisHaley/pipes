@@ -104,7 +104,7 @@ class PipesGrid:
 
         :raises ValueError: if `position` is out-of-bounds of the grid
         """
-        if not self._is_position_in_bounds(position):
+        if not self.is_position_in_bounds(position):
             raise ValueError("Position is out-of-bounds of the grid")
 
         return self.array[position.y][position.x]
@@ -122,7 +122,7 @@ class PipesGrid:
         :raises RuntimeError: if `position` is not a neighbour of one of `value`s
             pipeline endpoints
         """
-        if not self._is_position_in_bounds(position):
+        if not self.is_position_in_bounds(position):
             raise ValueError("Position is out-of-bounds of the grid")
 
         if value not in self.pipe_labels:
@@ -141,8 +141,10 @@ class PipesGrid:
 
         self.array[position.y][position.x] = value
 
-    def _is_position_in_bounds(self, position: Point) -> bool:
+    def is_position_in_bounds(self, position: Point) -> bool:
         """Check whether a point is in-bounds of the array.
+
+        :param position: the position to check
 
         :returns: True if in-bounds, else False
         """
