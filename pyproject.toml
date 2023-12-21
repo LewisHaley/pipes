@@ -20,6 +20,7 @@ dev = [
     "black",
     "pylint",
     "pytest",
+    "pytest-mock",
 ]
 
 [tool.pip-tools]
@@ -42,3 +43,6 @@ accept-no-param-doc = "no"
 accept-no-raise-doc = "no"
 accept-no-return-doc = "no"
 accept-no-yields-doc = "no"
+generated-members = [
+    "cv2",
+]

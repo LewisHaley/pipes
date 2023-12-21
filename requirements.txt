@@ -55,6 +55,10 @@ pygobject==3.46.0
 pylint==3.0.3
     # via pipes-game (pyproject.toml)
 pytest==7.4.3
+    # via
+    #   pipes-game (pyproject.toml)
+    #   pytest-mock
+pytest-mock==3.12.0
     # via pipes-game (pyproject.toml)
 tomlkit==0.12.3
     # via pylint

@@ -3,9 +3,7 @@
 import argparse
 import pathlib
 
-import numpy
-
-from . import display
+from . import display, drawer, parser
 
 
 def parse_args() -> argparse.Namespace:
@@ -41,7 +39,8 @@ def main() -> None:
 
     display_ = display.Display((args.width, args.height), "Pipes")
 
-    frame = numpy.zeros((args.height, args.width, 3), dtype=numpy.uint8)
+    game_grid = parser.parse_from_file(args.grid_file)
+    frame = drawer.grid_to_frame(game_grid, args.width, args.height)
     display_.update(frame)
     display_.start()
 
