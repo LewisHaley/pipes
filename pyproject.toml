@@ -1,0 +1,44 @@
+[project]
+name = "pipes-game"
+description = "pipes game solver"
+version = "0.0.1"
+dependencies = [
+    "numpy",
+    "opencv-python",
+    "pygobject",
+]
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools >= 43.0.0",
+    "wheel",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "pylint",
+    "pytest",
+]
+
+[tool.pip-tools]
+no-header = true
+quiet = true
+strip-extras = true
+
+[tool.black]
+check = true
+diff = true
+color = true
+quiet = true
+
+[tool.pylint.main]
+load-plugins = [
+    "pylint.extensions.docparams",
+    "pylint.extensions.docstyle",
+]
+accept-no-param-doc = "no"
+accept-no-raise-doc = "no"
+accept-no-return-doc = "no"
+accept-no-yields-doc = "no"

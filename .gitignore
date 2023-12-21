@@ -1,0 +1,6 @@
+*.swp
+*.swo
+venv
+bootstrap
+__pycache__
+*.egg-info
