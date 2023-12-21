@@ -31,6 +31,12 @@ def parse_args() -> argparse.Namespace:
         type=int,
         help="Default height of app in pixels",
     )
+    arg_parser.add_argument(
+        "--refresh-rate",
+        default=200,
+        type=int,
+        help="The refresh rate of the solver, in milliseconds",
+    )
     return arg_parser.parse_args()
 
 
@@ -57,7 +63,7 @@ def main() -> None:
             print("Game is fully solved!")
         return not complete
 
-    GLib.timeout_add_seconds(2, update)
+    GLib.timeout_add(args.refresh_rate, update)
 
     display_.start()
 
