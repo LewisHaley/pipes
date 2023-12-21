@@ -82,3 +82,26 @@ def test_iterate_yields_each_point_and_value():
         (grid.Point(3, 1), "B"),
     ]
     assert elems == expected_elems
+
+
+class TestSetCell:
+    def test_value_error_is_raised_if_out_of_bounds(self, test_grid):
+        with pytest.raises(
+            ValueError,
+            match=r"Position is out-of-bounds of the grid",
+        ):
+            test_grid.set_cell(grid.Point(100, 100), "A")
+
+    def test_value_error_is_raised_if_invalid_pipe_label(self, test_grid):
+        with pytest.raises(
+            ValueError,
+            match=r"'D' is not a known pipe label",
+        ):
+            test_grid.set_cell(grid.Point(1, 0), "D")
+
+    def test_runtime_error_is_raised_if_cell_already_has_value(self, test_grid):
+        with pytest.raises(
+            RuntimeError,
+            match=r"Position Point\(x=0, y=0\) already has a value A",
+        ):
+            test_grid.set_cell(grid.Point(0, 0), "B")
