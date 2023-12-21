@@ -1,5 +1,7 @@
 """Tests for grid.py."""
 
+import re
+
 import pytest
 
 from pipes_game import grid
@@ -84,7 +86,94 @@ def test_iterate_yields_each_point_and_value():
     assert elems == expected_elems
 
 
+class TestPipeEndpoints:
+    def test_pipe_endpoints_are_initialised_on_creation(self, test_grid):
+        expected = {
+            "A": {
+                "start": grid.Point(0, 0),
+                "end": grid.Point(2, 0),
+            },
+            "B": {
+                "start": grid.Point(0, 1),
+                "end": grid.Point(2, 1),
+            },
+            "C": {
+                "start": grid.Point(0, 2),
+                "end": grid.Point(2, 2),
+            },
+        }
+        assert test_grid.pipe_endpoints == expected
+
+    def test_value_error_raised_if_only_one_endpoint_found(self):
+        array = [["A"]]
+
+        with pytest.raises(
+            ValueError,
+            match=r"Only found 1 endpoint for pipe 'A'",
+        ):
+            grid.PipesGrid(
+                num_cols=1,
+                num_rows=1,
+                array=array,
+                pipe_labels={"A"},
+            )
+
+    def test_value_error_raised_if_more_than_two_endpoints_found(self):
+        array = [["A", "A", "A"]]
+
+        with pytest.raises(
+            ValueError,
+            match=r"Found more than 2 endpoints for pipe 'A'",
+        ):
+            grid.PipesGrid(
+                num_cols=3,
+                num_rows=1,
+                array=array,
+                pipe_labels={"A"},
+            )
+
+    def test_pipe_is_complete_if_endpoints_are_immediately_adjacent(self):
+        array = [
+            ["A", "A", "B", "B"],
+            ["C", UNSET, UNSET, "C"],
+        ]
+        test_grid = grid.PipesGrid(
+            num_cols=4,
+            num_rows=2,
+            array=array,
+            pipe_labels={"A", "B", "C"},
+        )
+        assert test_grid.is_pipe_complete("A")
+        assert test_grid.is_pipe_complete("B")
+        assert not test_grid.is_pipe_complete("C")
+
+
 class TestSetCell:
+    def test_cell_is_set_and_endpoint_updated(self):
+        array = [["A", UNSET, "A"]]
+        test_grid = grid.PipesGrid(
+            num_cols=3,
+            num_rows=1,
+            array=array,
+            pipe_labels={"A"},
+        )
+        # Check the initial endpoints to demonstrate the update
+        assert test_grid.pipe_endpoints == {
+            "A": {
+                "start": grid.Point(0, 0),
+                "end": grid.Point(2, 0),
+            },
+        }
+
+        test_grid.set_cell(grid.Point(1, 0), "A")
+        assert test_grid.array == [["A", "A", "A"]]
+        assert test_grid.pipe_endpoints == {
+            "A": {
+                "start": grid.Point(1, 0),  # this was updated
+                "end": grid.Point(2, 0),
+            },
+        }
+
     def test_value_error_is_raised_if_out_of_bounds(self, test_grid):
         with pytest.raises(
             ValueError,
@@ -105,3 +194,36 @@ class TestSetCell:
             match=r"Position Point\(x=0, y=0\) already has a value A",
         ):
             test_grid.set_cell(grid.Point(0, 0), "B")
+
+    @pytest.mark.parametrize(
+        ["array", "num_cols", "num_rows", "position"],
+        [
+            (
+                [["A", UNSET, UNSET, UNSET, "A"]],
+                5,
+                1,
+                grid.Point(2, 0),
+            ),
+            (
+                [["A"], [UNSET], [UNSET], [UNSET], ["A"]],
+                1,
+                5,
+                grid.Point(0, 2),
+            ),
+        ],
+    )
+    def test_runtime_error_is_raised_if_not_neighbor(
+        self, array, num_cols, num_rows, position
+    ):
+        test_grid = grid.PipesGrid(
+            num_cols=num_cols,
+            num_rows=num_rows,
+            array=array,
+            pipe_labels={"A"},
+        )
+
+        with pytest.raises(
+            RuntimeError,
+            match=re.escape(f"{position} is not a neighbor of A's endpoint"),
+        ):
+            test_grid.set_cell(position, "A")

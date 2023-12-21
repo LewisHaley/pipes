@@ -17,6 +17,17 @@ class Point:
     x: int
     y: int
 
+    def is_neighbor(self, other: "Point") -> bool:
+        """Check if another point neighbors this one.
+
+        :param other: the other point
+
+        :returns: True if the points are neighbors, else False
+        """
+        adjacent_x_and_same_y = abs(self.x - other.x) == 1 and self.y == other.y
+        adjacent_y_and_same_x = abs(self.y - other.y) == 1 and self.x == other.x
+        return adjacent_x_and_same_y or adjacent_y_and_same_x
+
 
 class PipesGrid:
     """Container class for the pipe grid array data."""
@@ -39,6 +50,50 @@ class PipesGrid:
         self.num_rows = num_rows
         self.array = array
         self.pipe_labels = pipe_labels
+
+        self.pipe_endpoints = {}
+        self._init_pipe_endpoints()
+
+    def _init_pipe_endpoints(self) -> None:
+        """Initialise the endpoints of the pipes in the grid.
+
+        :raises ValueError: if not exactly 2 endpoints are found for any given pipe
+        """
+        for point, value in self:
+            if value == UNSET:
+                continue
+
+            if value not in self.pipe_endpoints:
+                self.pipe_endpoints[value] = {
+                    "start": point,
+                }
+            elif "end" not in self.pipe_endpoints[value]:
+                self.pipe_endpoints[value]["end"] = point
+            else:
+                raise ValueError(f"Found more than 2 endpoints for pipe {value!r}")
+
+        for pipe, endpoints in self.pipe_endpoints.items():
+            # We must have found "start" for it to be present at all
+            if "end" not in endpoints:
+                raise ValueError(f"Only found 1 endpoint for pipe {pipe!r}")
+
+    def is_pipe_complete(self, pipe_label: str) -> bool:
+        """Check whether the 2 endpoints of a pipe are joined together.
+
+        :param pipe_label: the pipe to check
+
+        :returns: True if the pipe is complete
+        """
+        start = self.pipe_endpoints[pipe_label]["start"]
+        end = self.pipe_endpoints[pipe_label]["end"]
+        return start.is_neighbor(end)
+
+    def is_complete(self) -> bool:
+        """Check whether the whole grid is complete.
+
+        :returns: True if the whole grid is complete (all pipe endpoints are joined)
+        """
+        return all(self.is_pipe_complete(pipe_label) for pipe_label in self.pipe_labels)
 
     def get_cell(self, position: Point) -> str:
         """Get the value in a cell.
@@ -64,6 +119,8 @@ class PipesGrid:
         :raises ValueError: if `position` is out-of-bounds of the grid
         :raises ValueError: if `value` is not a known pipe label
         :raises RuntimeError: if the cell in `position` already has a set value
+        :raises RuntimeError: if `position` is not a neighbour of one of `value`s
+            pipeline endpoints
         """
         if not self._is_position_in_bounds(position):
             raise ValueError("Position is out-of-bounds of the grid")
@@ -73,6 +130,14 @@ class PipesGrid:
 
         if (existing := self.array[position.y][position.x]) != UNSET:
             raise RuntimeError(f"Position {position} already has a value {existing}")
+
+        # Check if the position is a neighbor of an endpoint
+        if position.is_neighbor(self.pipe_endpoints[value]["start"]):
+            self.pipe_endpoints[value]["start"] = position
+        elif position.is_neighbor(self.pipe_endpoints[value]["end"]):
+            self.pipe_endpoints[value]["end"] = position
+        else:
+            raise RuntimeError(f"{position} is not a neighbor of {value}'s endpoint")
 
         self.array[position.y][position.x] = value
 
